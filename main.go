@@ -58,7 +58,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Project files downloaded! [1/4]")
+	dialog.Alert("Project files downloaded! [1/5]")
 
 	err = downloadFile("git_installer.exe ",
 		"https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.4/Git-2.55.0.4-64-bit.exe")
@@ -74,7 +74,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Git temp files downloaded! [2/4]")
+	dialog.Alert("Git temp files downloaded! [2/5]")
 
 	dialog.Alert("We are about to download and install git, please follow the instructions in the installer(s), leave everything as default.")
 
@@ -90,7 +90,21 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Git installed! [3/4]")
+	dialog.Alert("Git installed! [3/5]")
+
+	err = os.Remove("git_installer.exe")
+	if err != nil {
+		dialog.Error(err.Error())
+		panic(err.Error())
+	}
+
+	err = os.Remove("git_lfs_installer.exe")
+	if err != nil {
+		dialog.Error(err.Error())
+		panic(err.Error())
+	}
+
+	dialog.Alert("Cleaned up git temp files! [4/5]")
 
 	err = exec.Command("git.exe", "init").Run()
 	if err != nil {
@@ -104,5 +118,5 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Project set up! [4/4]")
+	dialog.Alert("Project set up! [5/5]")
 }
