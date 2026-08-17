@@ -58,53 +58,69 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Project files downloaded! [1/5]")
+	dialog.Alert("Project files downloaded! [1/4]")
 
-	err = downloadFile("git_installer.exe ",
-		"https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.4/Git-2.55.0.4-64-bit.exe")
+	git_installed := true
+	err = exec.Command("git.exe", "-v").Run()
 	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
+		dialog.Alert("Git not found, downloading and installing git...")
+		git_installed = false
 	}
 
-	err = downloadFile("git_lfs_installer.exe ",
-		"https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-windows-v3.7.1.exe")
-	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
+	if !git_installed {
+		err = downloadFile("git_installer.exe ",
+			"https://github.com/git-for-windows/git/releases/download/v2.55.0.windows.4/Git-2.55.0.4-64-bit.exe")
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
+
+		dialog.Alert("We are about to install git, please follow the instructions in the installer, leave everything as default.")
+
+		err = exec.Command("./git_installer.exe").Run()
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
+
+		err = os.Remove("git_installer.exe")
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
 	}
 
-	dialog.Alert("Git temp files downloaded! [2/5]")
-
-	dialog.Alert("We are about to download and install git, please follow the instructions in the installer(s), leave everything as default.")
-
-	err = exec.Command("./git_installer.exe").Run()
+	lfs_installed := true
+	err = exec.Command("git.exe", "lfs", "version").Run()
 	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
+		dialog.Alert("Git LFS not found, downloading and installing...")
+		lfs_installed = false
 	}
 
-	err = exec.Command("./git_lfs_installer.exe").Run()
-	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
+	if !lfs_installed {
+		err = downloadFile("git_lfs_installer.exe ",
+			"https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-windows-v3.7.1.exe")
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
+
+		dialog.Alert("We are about to install git LFS, please follow the instructions in the installer, leave everything as default.")
+
+		err = exec.Command("./git_lfs_installer.exe").Run()
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
+
+		err = os.Remove("git_lfs_installer.exe")
+		if err != nil {
+			dialog.Error(err.Error())
+			panic(err.Error())
+		}
 	}
 
-	dialog.Alert("Git installed! [3/5]")
-
-	err = os.Remove("git_installer.exe")
-	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
-	}
-
-	err = os.Remove("git_lfs_installer.exe")
-	if err != nil {
-		dialog.Error(err.Error())
-		panic(err.Error())
-	}
-
-	dialog.Alert("Cleaned up git temp files! [4/5]")
+	dialog.Alert("Git Working! [2/3]")
 
 	err = exec.Command("git.exe", "init").Run()
 	if err != nil {
@@ -118,5 +134,5 @@ func main() {
 		panic(err.Error())
 	}
 
-	dialog.Alert("Project set up! [5/5]")
+	dialog.Alert("Project set up! [3/3]")
 }
