@@ -90,36 +90,6 @@ func main() {
 		}
 	}
 
-	lfs_installed := true
-	err = exec.Command("git.exe", "lfs", "version").Run()
-	if err != nil {
-		dialog.Alert("Git LFS not found, downloading and installing...")
-		lfs_installed = false
-	}
-
-	if !lfs_installed {
-		err = downloadFile("git_lfs_installer.exe ",
-			"https://github.com/git-lfs/git-lfs/releases/download/v3.7.1/git-lfs-windows-v3.7.1.exe")
-		if err != nil {
-			dialog.Error(err.Error())
-			panic(err.Error())
-		}
-
-		dialog.Alert("We are about to install git LFS, please follow the instructions in the installer, leave everything as default.")
-
-		err = exec.Command("./git_lfs_installer.exe").Run()
-		if err != nil {
-			dialog.Error(err.Error())
-			panic(err.Error())
-		}
-
-		err = os.Remove("git_lfs_installer.exe")
-		if err != nil {
-			dialog.Error(err.Error())
-			panic(err.Error())
-		}
-	}
-
 	dialog.Alert("Git Working! [2/3]")
 
 	err = exec.Command("git.exe", "init").Run()
